@@ -33,4 +33,5 @@ public class GunStats : ScriptableObject
 
     [Header("Gun")]
     public bool CanShoot = true;
+    public float AwakeTime;
 }

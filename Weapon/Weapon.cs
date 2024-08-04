@@ -6,12 +6,13 @@ public abstract class Weapon : MonoBehaviour
 {
     public static event Action<float> OnRecoilFire;
     public static event Action OnFire;
+    public static event Action<Vector3,Rigidbody> OnHit;
 
     [Header("Fire Point")]
-    [SerializeField] private Transform _raycastPoint;
+    [SerializeField] protected Transform _raycastPoint;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] protected AudioSource _audioSource;
 
     [SerializeField] private AudioClip _shootClip;
     [SerializeField] private AudioClip _reloadClip;
@@ -25,6 +26,8 @@ public abstract class Weapon : MonoBehaviour
 
     [SerializeField] private AnimationClip _reloadAnimClip;
     [SerializeField] protected AnimationClip _fireAnimClip;
+    [SerializeField] protected AnimationClip _awakeClip;
+
 
     private void Awake()
     {
@@ -35,6 +38,8 @@ public abstract class Weapon : MonoBehaviour
         GunStats.Ammo = GunStats.MaxAmmo;
 
         GunStats.ReloadTime = _reloadAnimClip.length;
+
+        GunStats.AwakeTime = _awakeClip.length;
     }
 
     virtual protected void Fire()
@@ -68,9 +73,16 @@ public abstract class Weapon : MonoBehaviour
 
             if (Physics.Raycast(_raycastPoint.position, vector3, out RaycastHit hit, Mathf.Infinity, layerMask))
             {
+                if (hit.collider.gameObject.TryGetComponent<IHitable>(out IHitable iHit))
+                {
+                    iHit.TakeDamage(GunStats.Damage);
+                }
+
                 Debug.DrawRay(_raycastPoint.position, vector3, Color.green, 10f);
 
                 Debug.Log(hit.collider.name);
+
+                OnHit?.Invoke(hit.point,hit.rigidbody);
             }
             else
             {
@@ -84,6 +96,8 @@ public abstract class Weapon : MonoBehaviour
             _audioSource.PlayOneShot(_emptyGunClip);
 
             StartCoroutine(ShootRate());
+
+            return;
         }
     }
 
@@ -105,6 +119,15 @@ public abstract class Weapon : MonoBehaviour
 
             StartCoroutine(ReloadCoroutine());
         }
+    }
+
+    private IEnumerator AwakeGun()
+    {
+        GunStats.CanShoot = false;
+
+        yield return new WaitForSeconds(GunStats.AwakeTime);
+
+        GunStats.CanShoot = true;
     }
 
     private IEnumerator ShootRate()
@@ -174,6 +197,8 @@ public abstract class Weapon : MonoBehaviour
 
     virtual protected void OnDisable()
     {
+        GunStats.Reloading = false;
+
         GunControler.Reload -= Reload;
         GunControler.Fire -= Fire;
         GunControler.Aiming -= Aim;
@@ -181,6 +206,10 @@ public abstract class Weapon : MonoBehaviour
 
     virtual protected void OnEnable()
     {
+        _animator.SetTrigger("Switch Gun");
+
+        StartCoroutine(AwakeGun());
+
         GunControler.Reload += Reload;
         GunControler.Fire += Fire;
         GunControler.Aiming += Aim;

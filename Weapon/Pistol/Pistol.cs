@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Pistol : Weapon
 {
+    [Header("Weapon")]
     [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private Light _light;
 
@@ -28,6 +29,8 @@ public class Pistol : Weapon
 
     override protected void OnEnable()
     {
+        _light.enabled = false;
+
         base.OnEnable();
 
         OnFire += Particle;

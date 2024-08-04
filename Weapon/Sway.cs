@@ -20,6 +20,5 @@ public class Sway : MonoBehaviour
         _position = Vector3.Slerp (_position, _targetPosition, _returnSpeed * Time.deltaTime);
 
         transform.localRotation = Quaternion.Euler(_position);
-
     }
 }

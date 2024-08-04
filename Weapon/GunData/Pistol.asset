@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxAmmo: 48
   MaxGunAmmo: 6
-  GunAmmo: 29971
-  Ammo: 42
-  Damage: 20
+  GunAmmo: 6
+  Ammo: 24
+  Damage: 50
   Accuracy: 0
   ShootRate: 0.3
   Recoil: 10
@@ -25,3 +25,4 @@ MonoBehaviour:
   CanReload: 1
   Reloading: 0
   CanShoot: 1
+  AwakeTime: 0.5

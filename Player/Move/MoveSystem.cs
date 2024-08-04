@@ -69,7 +69,7 @@ public class MoveSystem : MonoBehaviour
     {
         if (_player.Jump == true)
         {
-            _height.y = Mathf.Sqrt(_player.JumpStrenght * Time.fixedDeltaTime);
+            _height.y = Mathf.Sqrt(_player.JumpStrenght * Time.fixedDeltaTime * 2);
 
             _characterController.Move(Time.fixedDeltaTime * _player.JumpTime * _height);
 

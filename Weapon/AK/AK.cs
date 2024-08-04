@@ -3,8 +3,11 @@ using System.Collections;
 
 public class AK : Weapon
 {
+    [Header("Weapon")]
     [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private Light _light;
+
+    [SerializeField] private GameObject _bullet;
 
     private void Particle()
     {
@@ -28,6 +31,8 @@ public class AK : Weapon
 
     override protected void OnEnable()
     {
+        _light.enabled = false;
+
         base.OnEnable();
 
         OnFire += Particle;
