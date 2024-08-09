@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   MaxAmmo: 48
-  MaxGunAmmo: 6
-  GunAmmo: 6
-  Ammo: 24
+  MaxMagazineAmmo: 6
+  MagazineAmmo: 6
+  Ammo: 38
   Damage: 50
   Accuracy: 0
   ShootRate: 0.3

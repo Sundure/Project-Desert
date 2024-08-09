@@ -6,13 +6,13 @@ public class GunStats : ScriptableObject
     private void Awake()
     {
         Ammo = MaxAmmo;
-        GunAmmo = MaxGunAmmo;
+        MagazineAmmo = MaxMagazineAmmo;
     }
 
     [Header("Stats")]
     public int MaxAmmo;
-    public int MaxGunAmmo;
-    public int GunAmmo;
+    public int MaxMagazineAmmo;
+    public int MagazineAmmo;
     public int Ammo;
 
     public float Damage;

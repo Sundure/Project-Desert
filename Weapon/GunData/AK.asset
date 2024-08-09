@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: AK
   m_EditorClassIdentifier: 
   MaxAmmo: 120
-  MaxGunAmmo: 30
-  GunAmmo: 999999702
+  MaxMagazineAmmo: 30
+  GunAmmo: 0
   Ammo: 120
   Damage: 35
   Accuracy: 0
   ShootRate: 0.1
   Recoil: 20
   Automatic: 1
-  ReloadTime: 1.6666666
+  ReloadTime: 3.6666667
   CanReload: 1
   Reloading: 0
   CanShoot: 1

@@ -11,58 +11,68 @@ public class MoveSystem : MonoBehaviour
     [SerializeField] private Transform _footTrasform;
     [SerializeField] private LayerMask _ground;
 
+    private void Awake()
+    {
+        Player.Controller = _characterController;
+    }
+
     private void Update()
     {
-        _player.Grounded = Physics.CheckSphere(_footTrasform.position, _player.GravityCheckDistance, _ground);
-
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
-
-        Vector3 vector3 = transform.right * x + transform.forward * y;
-
-        if (_player.Grounded)
+        if (Player.CanMove)
         {
-            _player.FirstJump = true;
-            _player.SecondJump = true;
 
-            _height = Vector3.zero;
-        }
-        else if (_player.Grounded == false)
-        {
-            _height.y += _player.Gravity * Time.deltaTime;
+            float x = Input.GetAxis("Horizontal");
+            float y = Input.GetAxis("Vertical");
 
-            _characterController.Move(_height * Time.deltaTime);
+            _player.Grounded = Physics.CheckSphere(_footTrasform.position, _player.GravityCheckDistance, _ground);
 
-            _player.FirstJump = false;
-        }
 
-        if (_player.Jump == true)
-        {
-            if (_player.JumpTime <= _player.JumpVelocity / 5)
-                _player.Jump = false;
-        }
+            Vector3 vector3 = transform.right * x + transform.forward * y;
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            if (_player.FirstJump == true)
+            if (_player.Grounded)
             {
+                _player.FirstJump = true;
+                _player.SecondJump = true;
+
+                _height = Vector3.zero;
+            }
+            else if (_player.Grounded == false)
+            {
+                _height.y += _player.Gravity * Time.deltaTime;
+
+                Player.Controller.Move(_height * Time.deltaTime);
+
                 _player.FirstJump = false;
-
-                _player.Jump = true;
-
-                _player.JumpTime = _player.JumpVelocity;
             }
-            else if (_player.SecondJump == true)
+
+            if (_player.Jump == true)
             {
-                _player.SecondJump = false;
-
-                _player.Jump = true;
-
-                _player.JumpTime = _player.JumpVelocity * 1.5f;
+                if (_player.JumpTime <= _player.JumpVelocity / 5)
+                    _player.Jump = false;
             }
-        }
 
-        _characterController.Move(_player.PlayerSpeed * Time.deltaTime * vector3);
+            if (Input.GetButtonDown("Jump"))
+            {
+                if (_player.FirstJump == true)
+                {
+                    _player.FirstJump = false;
+
+                    _player.Jump = true;
+
+                    _player.JumpTime = _player.JumpVelocity;
+                }
+                else if (_player.SecondJump == true)
+                {
+                    _player.SecondJump = false;
+
+                    _player.Jump = true;
+
+                    _player.JumpTime = _player.JumpVelocity * 1.5f;
+                }
+            }
+
+            Player.Controller.Move(_player.PlayerSpeed * Time.deltaTime * vector3);
+        }
     }
 
     private void FixedUpdate()
@@ -71,7 +81,7 @@ public class MoveSystem : MonoBehaviour
         {
             _height.y = Mathf.Sqrt(_player.JumpStrenght * Time.fixedDeltaTime * 2);
 
-            _characterController.Move(Time.fixedDeltaTime * _player.JumpTime * _height);
+            Player.Controller.Move(Time.fixedDeltaTime * _player.JumpTime * _height);
 
             _player.JumpTime -= Time.fixedDeltaTime * 3;
         }

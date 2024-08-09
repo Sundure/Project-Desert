@@ -10,6 +10,8 @@ public class GunSwitch : MonoBehaviour
 
     private void Start()
     {
+        Car.OnCarSeat += DisableGun;
+
         for (int i = 0; i < _gunSlot.Length; i++)
         {
             if (_gunSlot[i].activeSelf && _changedGun == null)
@@ -31,31 +33,52 @@ public class GunSwitch : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1) && _changedGun != _gunSlot[0])
+        if (Player.CanUseGun)
         {
-            if (_changedGun != null)
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                _changedGun.SetActive(false);
+                ChangeGun(0);
             }
-
-            _changedGun = _gunSlot[0];
-
-            _changedGun.SetActive(true);
-
-            ChangeFireMod?.Invoke(_changedGun.GetComponent<Weapon>().GunStats.Automatic);
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                ChangeGun(1);
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2) && _changedGun != _gunSlot[1])
+    }
+
+    private void DisableGun()
+    {
+        if (_changedGun != null)
+        {       
+            _changedGun.SetActive(false);
+
+            _changedGun = null;
+        }
+    }
+
+    private void ChangeGun(int GunSlot)
+    {
+        if (_changedGun == _gunSlot[GunSlot])
         {
-            if (_changedGun != null)
-            {
-                _changedGun.SetActive(false);
-            }
+            DisableGun();
 
-            _changedGun = _gunSlot[1];
-
-            _changedGun.SetActive(true);
-
-            ChangeFireMod?.Invoke(_changedGun.GetComponent<Weapon>().GunStats.Automatic);
+            return;
         }
+
+        if (_changedGun != null)
+        {
+            _changedGun.SetActive(false);
+        }
+
+        _changedGun = _gunSlot[GunSlot];
+
+        _changedGun.SetActive(true);
+
+        ChangeFireMod?.Invoke(_changedGun.GetComponent<Weapon>().GunStats.Automatic);
+    }
+
+    private void OnDestroy()
+    {
+        Car.OnCarSeat -= DisableGun;
     }
 }

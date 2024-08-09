@@ -2,6 +2,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [Header("Controler")]
+    public static CharacterController Controller;
+
+    [Header("Camera")]
+    public float MouseSens;
+    public float SensMultiplier;
+
     [Header("Stats")]
     public float PlayerSpeed;
 
@@ -27,4 +34,14 @@ public class Player : MonoBehaviour
     public bool Grounded;
     [Header("Gun")]
     public static bool Aiming;
+    public static bool CanUseGun = true;
+
+    [Header("Booled")]
+    public static bool CanMove = true;
+    public static bool Drived;
+
+    public static void ChangeGunEmbark(bool booled)
+    {
+        CanUseGun = booled;
+    }
 }

@@ -16,29 +16,32 @@ public class GunControler : MonoBehaviour
 
     private void Update()
     {
-        if (_automatic)
+        if (Player.CanUseGun)
         {
-            if (Input.GetButton("Fire1"))
+            if (_automatic)
             {
-                Fire?.Invoke();
+                if (Input.GetButton("Fire1"))
+                {
+                    Fire?.Invoke();
+                }
             }
-        }
-        else
-        {
-            if (Input.GetButtonDown("Fire1"))
+            else
             {
-                Fire?.Invoke();
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    Fire?.Invoke();
+                }
             }
-        }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reload?.Invoke();
-        }
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Reload?.Invoke();
+            }
 
-        if (Input.GetButtonDown("Fire2"))
-        {
-            Aiming?.Invoke();
+            if (Input.GetButtonDown("Fire2"))
+            {
+                Aiming?.Invoke();
+            }
         }
     }
 

@@ -5,7 +5,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private ArmatureActivate _armatureActivate;
 
     private float _healt = 100;
-    private bool _alive = true;
 
     public void TakeDamage(float damage)
     {
@@ -20,15 +19,12 @@ public class Enemy : MonoBehaviour
             if (_healt <= 0)
             {
                 Die(damage);
-
-                _alive = false;
             }
         }
     }
 
     private void Die(float damage)
     {
-        _armatureActivate.ActivateRagdoll();
-        _armatureActivate.Force(damage);
+        _armatureActivate.ActivateRagdoll(damage);
     }
 }

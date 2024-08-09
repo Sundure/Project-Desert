@@ -6,7 +6,7 @@ public abstract class Weapon : MonoBehaviour
 {
     public static event Action<float> OnRecoilFire;
     public static event Action OnFire;
-    public static event Action<Vector3,Rigidbody> OnHit;
+    public static event Action<Vector3, Rigidbody> OnHit;
 
     [Header("Fire Point")]
     [SerializeField] protected Transform _raycastPoint;
@@ -44,7 +44,7 @@ public abstract class Weapon : MonoBehaviour
 
     virtual protected void Fire()
     {
-        if (GunStats.Reloading == false && GunStats.GunAmmo > 0 && GunStats.CanShoot)
+        if (GunStats.Reloading == false && GunStats.MagazineAmmo > 0 && GunStats.CanShoot)
         {
             OnFire?.Invoke();
 
@@ -63,9 +63,9 @@ public abstract class Weapon : MonoBehaviour
 
             AudioShoot();
 
-            GunStats.GunAmmo--;
+            GunStats.MagazineAmmo--;
 
-            Debug.Log("Fire");
+            Debug.Log($"Fire {this}");
 
             Vector3 vector3 = _raycastPoint.forward;
 
@@ -73,7 +73,9 @@ public abstract class Weapon : MonoBehaviour
 
             if (Physics.Raycast(_raycastPoint.position, vector3, out RaycastHit hit, Mathf.Infinity, layerMask))
             {
-                if (hit.collider.gameObject.TryGetComponent<IHitable>(out IHitable iHit))
+                OnHit?.Invoke(hit.point, hit.rigidbody);
+
+                if (hit.collider.gameObject.TryGetComponent(out IHitable iHit))
                 {
                     iHit.TakeDamage(GunStats.Damage);
                 }
@@ -82,7 +84,6 @@ public abstract class Weapon : MonoBehaviour
 
                 Debug.Log(hit.collider.name);
 
-                OnHit?.Invoke(hit.point,hit.rigidbody);
             }
             else
             {
@@ -103,7 +104,7 @@ public abstract class Weapon : MonoBehaviour
 
     virtual protected void Reload()
     {
-        if (GunStats.GunAmmo < GunStats.MaxGunAmmo && GunStats.Ammo > 0 && GunStats.Reloading == false)
+        if (GunStats.MagazineAmmo < GunStats.MaxMagazineAmmo && GunStats.Ammo > 0 && GunStats.Reloading == false)
         {
             if (Player.Aiming)
             {
@@ -150,15 +151,15 @@ public abstract class Weapon : MonoBehaviour
             GunStats.Reloading = false;
             GunStats.CanReload = true;
 
-            if (GunStats.Ammo >= GunStats.MaxGunAmmo)
+            if (GunStats.Ammo >= GunStats.MaxMagazineAmmo)
             {
-                GunStats.Ammo -= GunStats.MaxGunAmmo;
+                GunStats.Ammo -= GunStats.MaxMagazineAmmo - GunStats.MagazineAmmo;
 
-                GunStats.GunAmmo = GunStats.MaxGunAmmo;
+                GunStats.MagazineAmmo = GunStats.MaxMagazineAmmo;
             }
             else
             {
-                GunStats.GunAmmo = GunStats.Ammo;
+                GunStats.MagazineAmmo = GunStats.Ammo;
 
                 GunStats.Ammo = 0;
             }

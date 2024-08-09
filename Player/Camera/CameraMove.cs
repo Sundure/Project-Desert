@@ -2,32 +2,52 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    [SerializeField] private Transform _player;
-
-    [Header("Camera Move")]
-
-    [SerializeField] private float _mouseSens;
-
-    [SerializeField] private int _multiplier;
+    [SerializeField] private Transform _playerTransform;
+    [SerializeField] private Player _player;
 
     private float _xRotation;
+    private float _yRotation;
 
-    private void Awake()
+    private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        Car.OnCarSeat += ChangeZeroCameraPos;
     }
 
     private void Update()
     {
-        float mouseX = Input.GetAxis("Mouse X") * _mouseSens * _multiplier * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * _mouseSens * _multiplier * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * _player.MouseSens * _player.SensMultiplier * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * _player.MouseSens * _player.SensMultiplier * Time.deltaTime;
 
         _xRotation -= mouseY;
-        _xRotation = Mathf.Clamp(_xRotation, -90, 90);
 
-        transform.localRotation = Quaternion.Euler(_xRotation, 0, 0);
+        if (Player.Drived == false)
+        {
+            _xRotation = Mathf.Clamp(_xRotation, -90, 90);
 
-        _player.transform.Rotate(Vector3.up * mouseX);
+            transform.localRotation = Quaternion.Euler(_xRotation, 0, 0);
+
+            _playerTransform.transform.Rotate(Vector3.up * mouseX);
+        }
+        else
+        {
+            _yRotation += mouseX;
+
+            _xRotation = Mathf.Clamp(_xRotation, -30, 30);
+
+            transform.localRotation = Quaternion.Euler(_xRotation, _yRotation, 0);
+        }
+    }
+
+    private void ChangeZeroCameraPos()
+    {
+        _xRotation = 0;
+        _yRotation = 0;
+    }
+
+    private void OnDestroy()
+    {
+        Car.OnCarSeat -= ChangeZeroCameraPos;
     }
 }

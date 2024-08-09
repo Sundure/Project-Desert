@@ -7,8 +7,6 @@ public class AK : Weapon
     [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private Light _light;
 
-    [SerializeField] private GameObject _bullet;
-
     private void Particle()
     {
         _particleSystem.Play();
