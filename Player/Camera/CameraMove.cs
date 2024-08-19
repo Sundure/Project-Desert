@@ -8,6 +8,8 @@ public class CameraMove : MonoBehaviour
     private float _xRotation;
     private float _yRotation;
 
+    public float XRotation;
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -24,11 +26,13 @@ public class CameraMove : MonoBehaviour
 
         if (Player.Drived == false)
         {
-            _xRotation = Mathf.Clamp(_xRotation, -90, 90);
+            _xRotation = Mathf.Clamp(_xRotation, -_player.MaxCameraUpRotation, _player.MaxCameraDownRotation);
 
             transform.localRotation = Quaternion.Euler(_xRotation, 0, 0);
 
             _playerTransform.transform.Rotate(Vector3.up * mouseX);
+
+            XRotation = transform.localEulerAngles.x;
         }
         else
         {

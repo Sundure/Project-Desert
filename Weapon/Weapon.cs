@@ -6,6 +6,7 @@ public abstract class Weapon : MonoBehaviour
 {
     public static event Action<float> OnRecoilFire;
     public static event Action OnFire;
+    public static event Action<Transform> SpawnBullet;
     public static event Action<Vector3, Rigidbody> OnHit;
 
     [Header("Fire Point")]
@@ -47,6 +48,7 @@ public abstract class Weapon : MonoBehaviour
         if (GunStats.Reloading == false && GunStats.MagazineAmmo > 0 && GunStats.CanShoot)
         {
             OnFire?.Invoke();
+            SpawnBullet?.Invoke(_raycastPoint.transform);
 
             FireAnim();
 
