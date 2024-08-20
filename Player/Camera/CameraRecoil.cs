@@ -12,9 +12,9 @@ public class CameraRecoil : MonoBehaviour
     [SerializeField] private Player _player;
 
     private const float _minTriggerRotationValue = 270;
-    private const float _maxTriggerRotationValue = 360;
-    private float _maxRotationZone = 90;
-    private const float _minRotationZone = 0;
+    private const float _maxTriggerRotationValue = 350;
+    private float _maxRotationZone;
+    private const float _minRotationZone = -10;
     private void Start()
     {
         _maxRotationZone = _player.MaxCameraUpRotation;
@@ -27,7 +27,7 @@ public class CameraRecoil : MonoBehaviour
 
         _position = Vector3.Slerp(_position, _targetRecoil, _speed * Time.deltaTime);
 
-        RecoilLimit();
+        RecoilLimit(); // need reworking
 
         transform.localRotation = Quaternion.Euler(-_position);
     }
@@ -38,7 +38,7 @@ public class CameraRecoil : MonoBehaviour
 
         float rotation = _cameraMove.XRotation;
         if (rotation > maxCamRotation)
-        {
+        {   
             rotation = maxCamRotation;
         }
 
@@ -53,16 +53,9 @@ public class CameraRecoil : MonoBehaviour
             float angle = normalized * (_maxRotationZone - _minRotationZone) + _minRotationZone;
 
             maxRotation = angle;
-
-            Debug.Log(maxRotation);
         }
 
         _position.x = Mathf.Clamp(_position.x, 0, maxRotation);
-
-        if (maxRotation == 0)
-        {
-            Debug.Log("Limit");
-        }
     }
 
     private void OnRecoil(float recoil)

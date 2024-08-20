@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public float MouseSens;
     public float SensMultiplier;
 
-    public readonly float MaxCameraUpRotation = 90;
+    public readonly float MaxCameraUpRotation = 80;
     public readonly float MaxCameraDownRotation = 90;
 
     [Header("Stats")]

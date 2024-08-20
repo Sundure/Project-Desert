@@ -11,6 +11,7 @@ public abstract class Weapon : MonoBehaviour
 
     [Header("Fire Point")]
     [SerializeField] protected Transform _raycastPoint;
+    [SerializeField] protected Transform _bulletSpawnPoint;
 
     [Header("Audio")]
     [SerializeField] protected AudioSource _audioSource;
@@ -48,7 +49,7 @@ public abstract class Weapon : MonoBehaviour
         if (GunStats.Reloading == false && GunStats.MagazineAmmo > 0 && GunStats.CanShoot)
         {
             OnFire?.Invoke();
-            SpawnBullet?.Invoke(_raycastPoint.transform);
+            SpawnBullet?.Invoke(_bulletSpawnPoint);
 
             FireAnim();
 
