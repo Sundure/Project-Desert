@@ -32,14 +32,11 @@ public class CarWheel : MonoBehaviour
 
             _wheel.Rotate(Vector3.right * _car.Speed / 5);
 
+            _wheelCollider.motorTorque = (_car.Speed / 10);
+
             if (FrontWheel)
             {
-                _wheelCollider.motorTorque = _car.Speed / 10;
                 _wheelCollider.steerAngle = _car.WheelRotate;
-            }
-            else
-            {
-                _wheelCollider.motorTorque = _car.Speed / 10;
             }
         }
     }

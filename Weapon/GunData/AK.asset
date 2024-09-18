@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxAmmo: 120
   MaxMagazineAmmo: 30
-  MagazineAmmo: 9994729
-  Ammo: 120
+  MagazineAmmo: 6732
+  Ammo: 90
   Damage: 35
   Accuracy: 0
   ShootRate: 0.1

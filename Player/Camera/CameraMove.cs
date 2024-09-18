@@ -3,7 +3,7 @@ using UnityEngine;
 public class CameraMove : MonoBehaviour
 {
     [SerializeField] private Transform _playerTransform;
-    [SerializeField] private Player _player;
+    [SerializeField] private CameraSettings _cameraSettings;
 
     private float _xRotation;
     private float _yRotation;
@@ -19,14 +19,14 @@ public class CameraMove : MonoBehaviour
 
     private void Update()
     {
-        float mouseX = Input.GetAxis("Mouse X") * _player.MouseSens * _player.SensMultiplier * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * _player.MouseSens * _player.SensMultiplier * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * _cameraSettings.MouseSens * _cameraSettings.SensMultiplier * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * _cameraSettings.MouseSens * _cameraSettings.SensMultiplier * Time.deltaTime;
 
         _xRotation -= mouseY;
 
         if (Player.Drived == false)
         {
-            _xRotation = Mathf.Clamp(_xRotation, -_player.MaxCameraUpRotation, _player.MaxCameraDownRotation);
+            _xRotation = Mathf.Clamp(_xRotation, -_cameraSettings.MaxUpRotation, _cameraSettings.MaxDownRotation);
 
             transform.localRotation = Quaternion.Euler(_xRotation, 0, 0);
 

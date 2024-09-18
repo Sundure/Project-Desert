@@ -41,7 +41,7 @@ public class Car : MonoBehaviour
     [SerializeField] private CarWheel[] _frontWheel;
 
     [SerializeField] private AudioClip _startCarClip;
-    [SerializeField] private AudioClip _carEngineClip;
+    //[SerializeField] private AudioClip _carEngineClip;
     [SerializeField] private AudioClip _carEngineSleepClip;
 
     [SerializeField] private AudioClip _idleClip;
@@ -49,10 +49,11 @@ public class Car : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioSource _idleAudioSource;
 
+    public Rigidbody RB;
+
     private void Start()
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
-        rb.centerOfMass = Vector3.zero;
+        RB.centerOfMass = Vector3.zero;
 
         _idleAudioSource.loop = true;
         _idleAudioSource.clip = _idleClip;
@@ -112,11 +113,11 @@ public class Car : MonoBehaviour
 
             _activated = true;
 
-            _audioSource.volume = 0;
-            _audioSource.clip = _carEngineClip;
-            _audioSource.loop = true;
-
-            _audioSource.Play();
+          //_audioSource.volume = 0;
+          //_audioSource.clip = _carEngineClip;
+          //_audioSource.loop = true;
+          //
+          //_audioSource.Play();
         }
     }
 
@@ -163,11 +164,10 @@ public class Car : MonoBehaviour
 
             if (_activated)
             {
+                AudioControll();
+
                 Drive(speedMultiplier);
                 Break();
-
-                _audioSource.volume = Speed / _maxSpeed;
-                _audioSource.volume = Mathf.Clamp(_audioSource.volume, 0f, 0.7f);
 
                 Y = Input.GetAxis("Vertical");
             }
@@ -288,6 +288,12 @@ public class Car : MonoBehaviour
         {
             BreakForce = 0;
         }
+    }
+
+    private void AudioControll()
+    {
+        _audioSource.volume = Speed / _maxSpeed;
+        _audioSource.volume = Mathf.Clamp(_audioSource.volume, 0f, 0.7f);
     }
 
     private void OnCollisionEnter(Collision collision)

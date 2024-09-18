@@ -7,7 +7,6 @@ public abstract class Weapon : MonoBehaviour
     public static event Action<float> OnRecoilFire;
     public static event Action OnFire;
     public static event Action<Transform> SpawnBullet;
-    public static event Action<Vector3, Rigidbody> OnHit;
 
     [Header("Fire Point")]
     [SerializeField] protected Transform _raycastPoint;
@@ -76,7 +75,10 @@ public abstract class Weapon : MonoBehaviour
 
             if (Physics.Raycast(_raycastPoint.position, vector3, out RaycastHit hit, Mathf.Infinity, layerMask))
             {
-                OnHit?.Invoke(hit.point, hit.rigidbody);
+                if (hit.collider.TryGetComponent(out IFoced hitable))
+                {
+                    hitable.TakeForce(hit.point, hit.rigidbody);
+                }
 
                 if (hit.collider.gameObject.TryGetComponent(out IHitable iHit))
                 {

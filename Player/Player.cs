@@ -5,13 +5,6 @@ public class Player : MonoBehaviour
     [Header("Controler")]
     public static CharacterController Controller;
 
-    [Header("Camera")]
-    public float MouseSens;
-    public float SensMultiplier;
-
-    public readonly float MaxCameraUpRotation = 80;
-    public readonly float MaxCameraDownRotation = 90;
-
     [Header("Stats")]
     public float PlayerSpeed;
 
@@ -43,6 +36,8 @@ public class Player : MonoBehaviour
     public static bool CanMove = true;
     public static bool Drived;
 
+    [Header("Interact")]
+    public static float InteractRange = 3;
     public static void ChangeGunEmbark(bool booled)
     {
         CanUseGun = booled;

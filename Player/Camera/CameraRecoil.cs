@@ -9,15 +9,16 @@ public class CameraRecoil : MonoBehaviour
     [SerializeField] private float _speed;
 
     [SerializeField] private CameraMove _cameraMove;
-    [SerializeField] private Player _player;
+    [SerializeField] private CameraSettings _cameraSettings;
 
     private const float _minTriggerRotationValue = 270;
     private const float _maxTriggerRotationValue = 350;
     private float _maxRotationZone;
     private const float _minRotationZone = -10;
+
     private void Start()
     {
-        _maxRotationZone = _player.MaxCameraUpRotation;
+        _maxRotationZone = _cameraSettings.MaxUpRotation;
 
         Weapon.OnRecoilFire += OnRecoil;
     }
@@ -34,7 +35,7 @@ public class CameraRecoil : MonoBehaviour
 
     private void RecoilLimit()
     {
-        float maxCamRotation = _player.MaxCameraUpRotation;
+        float maxCamRotation = _cameraSettings.MaxUpRotation;
 
         float rotation = _cameraMove.XRotation;
         if (rotation > maxCamRotation)
@@ -44,7 +45,7 @@ public class CameraRecoil : MonoBehaviour
 
         float maxRotation = rotation + maxCamRotation;
 
-        maxRotation = Mathf.Clamp(maxRotation, 0, maxCamRotation + _player.MaxCameraDownRotation);
+        maxRotation = Mathf.Clamp(maxRotation, 0, maxCamRotation + _cameraSettings.MaxDownRotation);
 
         if (_cameraMove.XRotation >= _minTriggerRotationValue && _cameraMove.XRotation <= _maxTriggerRotationValue)
         {

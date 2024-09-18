@@ -6,17 +6,17 @@ public class Interact : MonoBehaviour
     [SerializeField] private Camera _camera;
     private void Update()
     {
-            int layerMask = ~LayerMask.GetMask("Car");
+        int layerMask = ~LayerMask.GetMask("Car");
 
-            Ray ray = _camera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
+        Ray ray = _camera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 3, layerMask))
-            {
-                StartCoroutine(FixedInterat(hit));
-            }
+        if (Physics.Raycast(ray, out RaycastHit hit, Player.InteractRange, layerMask))
+        {
+            StartCoroutine(FixedInteract(hit));
+        }
     }
 
-    private IEnumerator FixedInterat(RaycastHit hit)
+    private IEnumerator FixedInteract(RaycastHit hit)
     {
         yield return null;
 
