@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     public static bool Drived;
 
     [Header("Interact")]
-    public static float InteractRange = 3;
+    public static readonly float InteractRange = 3;
     public static void ChangeGunEmbark(bool booled)
     {
         CanUseGun = booled;
