@@ -10,12 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: abb1d5bbd5694934ebf26715b931ae3d, type: 3}
-  m_Name: Pistol
+  m_Name: Revolver
   m_EditorClassIdentifier: 
-  MaxAmmo: 48
   MaxMagazineAmmo: 6
-  MagazineAmmo: 6
-  Ammo: 38
+  MagazineAmmo: 0
   Damage: 50
   Accuracy: 0
   ShootRate: 0.3
@@ -26,3 +24,5 @@ MonoBehaviour:
   Reloading: 0
   CanShoot: 1
   AwakeTime: 0.5
+  GunType: 0
+  BulletType: 1

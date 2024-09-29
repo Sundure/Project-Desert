@@ -7,9 +7,12 @@ public class GunSwitch : MonoBehaviour
     [SerializeField] private GameObject _changedGun;
 
     public static event Action<bool> ChangeFireMod;
+    public static event Action<bool> SwitchGun;
+
+    public static bool Enabled;
 
     private void Start()
-    {
+    {   
         Car.OnCarSeat += DisableGun;
 
         for (int i = 0; i < _gunSlot.Length; i++)
@@ -25,6 +28,10 @@ public class GunSwitch : MonoBehaviour
                 _changedGun.SetActive(true);
 
                 ChangeFireMod?.Invoke(_changedGun.GetComponent<Weapon>().GunStats.Automatic);
+
+                SwitchGun?.Invoke(_changedGun.activeSelf);
+
+                Enabled = gameObject.activeSelf;
             }
 
         }
@@ -49,8 +56,10 @@ public class GunSwitch : MonoBehaviour
     private void DisableGun()
     {
         if (_changedGun != null)
-        {       
+        {
             _changedGun.SetActive(false);
+
+            SwitchGun?.Invoke(_changedGun.activeSelf);
 
             _changedGun = null;
         }
@@ -73,6 +82,8 @@ public class GunSwitch : MonoBehaviour
         _changedGun = _gunSlot[GunSlot];
 
         _changedGun.SetActive(true);
+
+        SwitchGun?.Invoke(_changedGun.activeSelf);
 
         ChangeFireMod?.Invoke(_changedGun.GetComponent<Weapon>().GunStats.Automatic);
     }

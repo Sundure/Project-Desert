@@ -26,6 +26,9 @@ public class Drag : MonoBehaviour
                         _draged = draged;
 
                         _dragging = true;
+
+                        Player.Aiming = false;
+                        Player.ChangeGunEmbark(false);
                     }
                 }
             }
@@ -56,6 +59,8 @@ public class Drag : MonoBehaviour
                 _draged.Drop();
 
                 _draged = null;
+
+                Player.ChangeGunEmbark(true);
             }
         }
     }

@@ -8,7 +8,7 @@ public class Draged : MonoBehaviour, IDraged
 
     private Transform _dragPoint;
 
-    private float _minSpeed = 2;
+    private readonly float _minSpeed = 2;
     private void Start()
     {
         enabled = false;

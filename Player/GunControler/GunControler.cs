@@ -9,7 +9,7 @@ public class GunControler : MonoBehaviour
 
     private bool _automatic;
 
-    private void Start()
+    private void Awake()
     {
         GunSwitch.ChangeFireMod += ChangeFireMode;
     }

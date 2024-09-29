@@ -5,15 +5,12 @@ public class GunStats : ScriptableObject
 {
     private void Awake()
     {
-        Ammo = MaxAmmo;
         MagazineAmmo = MaxMagazineAmmo;
     }
 
     [Header("Stats")]
-    public int MaxAmmo;
     public int MaxMagazineAmmo;
     public int MagazineAmmo;
-    public int Ammo;
 
     public float Damage;
 
@@ -34,4 +31,7 @@ public class GunStats : ScriptableObject
     [Header("Gun")]
     public bool CanShoot = true;
     public float AwakeTime;
+
+    public GunType GunType;
+    public BulletType BulletType;
 }

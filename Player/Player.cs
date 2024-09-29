@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -38,8 +39,14 @@ public class Player : MonoBehaviour
 
     [Header("Interact")]
     public static readonly float InteractRange = 3;
+
+
+    public static event Action ChangeAim;
+
     public static void ChangeGunEmbark(bool booled)
     {
         CanUseGun = booled;
+
+        ChangeAim?.Invoke();
     }
 }
