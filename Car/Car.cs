@@ -128,7 +128,7 @@ public class Car : MonoBehaviour
         Player.Drived = _used;
         Player.CanMove = !_used;
 
-        Player.ChangeGunEmbark(!_used);
+        Player.AutomaticChangeGunEmbark();
 
         foreach (CarWheel wheel in _carWheel)
         {

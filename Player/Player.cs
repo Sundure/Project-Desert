@@ -35,10 +35,13 @@ public class Player : MonoBehaviour
 
     [Header("Booled")]
     public static bool CanMove = true;
+    public static bool CanInteract = true;
     public static bool Drived;
+    public static bool UseInventory;
+    public static bool Dragging;
 
     [Header("Interact")]
-    public static readonly float InteractRange = 3;
+    public static readonly float InteractRange = 3.5f;
 
 
     public static event Action ChangeAim;
@@ -48,5 +51,17 @@ public class Player : MonoBehaviour
         CanUseGun = booled;
 
         ChangeAim?.Invoke();
+    }
+
+    public static void AutomaticChangeGunEmbark()
+    {
+        if (Drived || UseInventory || Dragging)
+        {
+            CanUseGun = false;
+        }
+        else
+        {
+            CanUseGun = true;
+        }
     }
 }

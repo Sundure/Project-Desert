@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CameraMove : MonoBehaviour
+public class PlayerCamera : MonoBehaviour
 {
     [SerializeField] private Transform _playerTransform;
     [SerializeField] private CameraSettings _cameraSettings;
@@ -10,11 +10,15 @@ public class CameraMove : MonoBehaviour
 
     public float XRotation;
 
+    public static Camera Camera;
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Car.OnCarSeat += ChangeZeroCameraPos;
+
+        Camera = GetComponent<Camera>();
     }
 
     private void Update()

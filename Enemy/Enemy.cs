@@ -8,10 +8,10 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        Debug.Log($"I Take Damage {gameObject.name}");
-
         if (_healt > 0)
         {
+            Debug.Log($"I Take {damage} Damage ({gameObject.name})");
+
             _healt -= damage;
 
             Debug.Log(_healt);

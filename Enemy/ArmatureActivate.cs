@@ -10,6 +10,10 @@ public class ArmatureActivate : MonoBehaviour
     private Vector3 _position;
     private Rigidbody _rb;
 
+    private float _forceMultiplier;
+
+    private const float _constForceMultipier = 25;
+
     private void Start()
     {
         foreach (Rigidbody rig in _rig)
@@ -41,17 +45,17 @@ public class ArmatureActivate : MonoBehaviour
 
     }
 
-    public void ChangeForcePoint(Vector3 vector3, Rigidbody rb)
+    public void ChangeForcePoint(Vector3 vector3, Rigidbody rb, float force)
     {
         _position = vector3;
         _rb = rb;
-        Debug.Log("I Change Force Point");
+        _forceMultiplier = force;
     }
 
     private void RagdolForce(float force)
     {
         Vector3 vector3 = (_rb.position - _position).normalized;
 
-        _rb.AddForce(force * 25 * vector3);
+        _rb.AddForce(force * _forceMultiplier * _constForceMultipier * vector3);
     }
 }

@@ -8,7 +8,7 @@ public class CameraRecoil : MonoBehaviour
     [SerializeField] private float _returnSpeed;
     [SerializeField] private float _speed;
 
-    [SerializeField] private CameraMove _cameraMove;
+    [SerializeField] private PlayerCamera _playerCamera;
     [SerializeField] private CameraSettings _cameraSettings;
 
     private const float _minTriggerRotationValue = 270;
@@ -28,7 +28,7 @@ public class CameraRecoil : MonoBehaviour
 
         _position = Vector3.Slerp(_position, _targetRecoil, _speed * Time.deltaTime);
 
-        RecoilLimit(); // need reworking
+        RecoilLimit(); // need refactoring
 
         transform.localRotation = Quaternion.Euler(-_position);
     }
@@ -37,7 +37,7 @@ public class CameraRecoil : MonoBehaviour
     {
         float maxCamRotation = _cameraSettings.MaxUpRotation;
 
-        float rotation = _cameraMove.XRotation;
+        float rotation = _playerCamera.XRotation;
         if (rotation > maxCamRotation)
         {   
             rotation = maxCamRotation;
@@ -47,9 +47,9 @@ public class CameraRecoil : MonoBehaviour
 
         maxRotation = Mathf.Clamp(maxRotation, 0, maxCamRotation + _cameraSettings.MaxDownRotation);
 
-        if (_cameraMove.XRotation >= _minTriggerRotationValue && _cameraMove.XRotation <= _maxTriggerRotationValue)
+        if (_playerCamera.XRotation >= _minTriggerRotationValue && _playerCamera.XRotation <= _maxTriggerRotationValue)
         {
-            float normalized = (_cameraMove.XRotation - _minTriggerRotationValue) / (_maxTriggerRotationValue - _minTriggerRotationValue);
+            float normalized = (_playerCamera.XRotation - _minTriggerRotationValue) / (_maxTriggerRotationValue - _minTriggerRotationValue);
 
             float angle = normalized * (_maxRotationZone - _minRotationZone) + _minRotationZone;
 

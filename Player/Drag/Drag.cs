@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Drag : MonoBehaviour
 {
-    [SerializeField] private Camera _camera;
+    [SerializeField] private float _throwPower;
 
-    [SerializeField] private bool _dragging;
+    [SerializeField] private Camera _camera;
 
     [SerializeField] private Transform _dragPointTransform;
 
@@ -17,7 +17,7 @@ public class Drag : MonoBehaviour
 
             Physics.Raycast(ray, out RaycastHit hit, Player.InteractRange);
 
-            if (_dragging == false)
+            if (Player.Dragging == false)
             {
                 if (hit.collider != null)
                 {
@@ -25,16 +25,16 @@ public class Drag : MonoBehaviour
                     {
                         _draged = draged;
 
-                        _dragging = true;
+                        Player.Dragging = true;
 
                         Player.Aiming = false;
-                        Player.ChangeGunEmbark(false);
+                        Player.AutomaticChangeGunEmbark();
                     }
                 }
             }
         }
 
-        if (Input.GetButton("Interact") && _dragging)
+        if (Input.GetButton("Interact") && Player.Dragging)
         {
             Ray ray = _camera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
 
@@ -42,12 +42,12 @@ public class Drag : MonoBehaviour
 
             if (Input.GetButtonDown("Fire1"))
             {
-                _draged.Throw(hit.point);
+                _draged.Throw(hit.point , _throwPower);
 
-                _dragging = false;
+                Player.Dragging = false;
             }
 
-            if (_dragging)
+            if (Player.Dragging)
             {
                 _draged.Drag(_dragPointTransform);
             }
@@ -55,12 +55,12 @@ public class Drag : MonoBehaviour
         else if (Input.GetButtonUp("Interact") && _draged != null)
         {
             {
-                _dragging = false;
+                Player.Dragging = false;
                 _draged.Drop();
 
                 _draged = null;
 
-                Player.ChangeGunEmbark(true);
+                Player.AutomaticChangeGunEmbark();
             }
         }
     }

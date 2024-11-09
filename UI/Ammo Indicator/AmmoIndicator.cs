@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class AmmoIndicator : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _ammoValue;
+    [SerializeField] private TextMeshProUGUI _ammo;
+    [SerializeField] private TextMeshProUGUI _magazineAmmo;
 
     private int _lastValue;
     private BulletType _lastAmmo;
@@ -13,13 +14,24 @@ public class AmmoIndicator : MonoBehaviour
         GunSwitch.SwitchGun += SwitchUI;
         Weapon.ChangeAmmoUI += ChangeValue;
         AmmoBox.AmmoPickup += ValueCheck;
+
+        gameObject.SetActive(false);
     }
 
     private void ChangeValue(int ammo, BulletType ammoIndex)
     {
-        Debug.Log(ammoIndex);
+        _ammo.text = $"{ammo}";
 
-        _ammoValue.text = $"{ammo}/{Inventory.Ammo[(int)ammoIndex]}";
+        if (BulletInventory.Ammo[(int)ammoIndex] > 999)
+        {
+            _magazineAmmo.fontSize = 30;
+        }
+        else
+        {
+            _magazineAmmo.fontSize = 40;
+        }
+
+        _magazineAmmo.text = $"{BulletInventory.Ammo[(int)ammoIndex]}";
 
         _lastValue = ammo;
         _lastAmmo = ammoIndex;
@@ -40,7 +52,7 @@ public class AmmoIndicator : MonoBehaviour
 
     private void OnDestroy()
     {
-        GunSwitch.SwitchGun += SwitchUI;
+        GunSwitch.SwitchGun -= SwitchUI;
         Weapon.ChangeAmmoUI -= ChangeValue;
         AmmoBox.AmmoPickup -= ValueCheck;
     }

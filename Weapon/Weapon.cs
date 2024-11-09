@@ -6,8 +6,9 @@ public abstract class Weapon : MonoBehaviour
 {
     public static event Action<float> OnRecoilFire;
     public static event Action OnFire;
-    public static event Action<Transform> SpawnBullet;
+    public static event Action<Transform, float> SpawnBullet;
     public static event Action<bool> ChangeAim;
+    public static event Action<Vector3> OnHit;
 
     public static event Action<int, BulletType> ChangeAmmoUI;
 
@@ -22,24 +23,23 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] private AudioClip _reloadClip;
     [SerializeField] private AudioClip _emptyGunClip;
 
-    [Header("Data")]
-    public GunStats GunStats;
-
     [Header("Anim")]
     [SerializeField] protected Animator _animator;
 
     [SerializeField] private AnimationClip _reloadAnimClip;
-    [SerializeField] protected AnimationClip _fireAnimClip;
-    [SerializeField] protected AnimationClip _awakeClip;
+    [SerializeField] private AnimationClip _fireAnimClip;
+    [SerializeField] private AnimationClip _awakeClip;
 
+    [Header("Data")]
+    [SerializeField] private GunStats GunStats;
 
     private void Awake()
     {
+        GunStats.GunAwake = false;
         GunStats.Reloading = false;
-        GunStats.CanReload = true;
         GunStats.CanShoot = true;
 
-        Inventory.Ammo[(int)GunStats.BulletType] = Inventory.Ammo[(int)GunStats.BulletType];
+        BulletInventory.Ammo[(int)GunStats.BulletType] = BulletInventory.Ammo[(int)GunStats.BulletType];
 
         GunStats.ReloadTime = _reloadAnimClip.length;
 
@@ -51,12 +51,42 @@ public abstract class Weapon : MonoBehaviour
         ChangeAmmoUI?.Invoke(GunStats.MagazineAmmo, GunStats.BulletType);
     }
 
+    private void Update()
+    {
+        if (Player.CanUseGun)
+        {
+            if (GunStats.Automatic && GunStats.MagazineAmmo > 0)
+            {
+                if (Input.GetButton("Fire1"))
+                {
+                    Fire();
+                }
+            }
+            else
+            {
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    Fire();
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Reload();
+            }
+
+            if (Input.GetButtonDown("Fire2"))
+            {
+                Aim();
+            }
+        }
+    }
+
     virtual protected void Fire()
     {
         if (GunStats.Reloading == false && GunStats.MagazineAmmo > 0 && GunStats.CanShoot)
         {
             OnFire?.Invoke();
-            SpawnBullet?.Invoke(_bulletSpawnPoint);
 
             FireAnim();
 
@@ -79,30 +109,38 @@ public abstract class Weapon : MonoBehaviour
 
             Debug.Log($"Fire {this}");
 
-            Vector3 vector3 = _raycastPoint.forward;
-
             int layerMask = ~LayerMask.GetMask("Player");
 
-            if (Physics.Raycast(_raycastPoint.position, vector3, out RaycastHit hit, Mathf.Infinity, layerMask))
-            {
-                if (hit.collider.TryGetComponent(out IFoced hitable))
-                {
-                    hitable.TakeForce(hit.point, hit.rigidbody);
-                }
+            Ray ray = PlayerCamera.Camera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
 
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
+            {
                 if (hit.collider.gameObject.TryGetComponent(out IHitable iHit))
                 {
+                    if (hit.collider.gameObject.TryGetComponent(out IFoced iForce))
+                    {
+                        iForce.TakeForce(hit.point, GunStats.Damage);
+                    }
+
                     iHit.TakeDamage(GunStats.Damage);
                 }
+                else
+                {
+                    SpawnBullet?.Invoke(_bulletSpawnPoint, GunStats.Damage);
 
-                Debug.DrawRay(_raycastPoint.position, vector3, Color.green, 10f);
+                    OnHit?.Invoke(hit.point);
+                }
+
+                Debug.DrawRay(ray.origin, ray.direction, Color.green, 10f);
 
                 Debug.Log(hit.collider.name);
 
             }
             else
             {
-                Debug.DrawRay(_raycastPoint.position, vector3, Color.red, 10f);
+                SpawnBullet?.Invoke(_bulletSpawnPoint, GunStats.Damage);
+
+                Debug.DrawRay(ray.origin, ray.direction, Color.red, 10f);
             }
 
             StartCoroutine(ShootRate());
@@ -119,7 +157,7 @@ public abstract class Weapon : MonoBehaviour
 
     virtual protected void Reload()
     {
-        if (GunStats.MagazineAmmo < GunStats.MaxMagazineAmmo && Inventory.Ammo[(int)GunStats.BulletType] > 0 && GunStats.Reloading == false)
+        if (GunStats.MagazineAmmo < GunStats.MaxMagazineAmmo && BulletInventory.Ammo[(int)GunStats.BulletType] > 0 && GunStats.Reloading == false && GunStats.GunAwake == false)
         {
             if (Player.Aiming)
             {
@@ -144,6 +182,10 @@ public abstract class Weapon : MonoBehaviour
         yield return new WaitForSeconds(GunStats.AwakeTime);
 
         GunStats.CanShoot = true;
+
+        GunStats.GunAwake = false;
+
+        GunStats.CanReload = true;
     }
 
     private IEnumerator ShootRate()
@@ -166,17 +208,17 @@ public abstract class Weapon : MonoBehaviour
             GunStats.Reloading = false;
             GunStats.CanReload = true;
 
-            if (Inventory.Ammo[(int)GunStats.BulletType] >= GunStats.MaxMagazineAmmo)
+            if (BulletInventory.Ammo[(int)GunStats.BulletType] >= GunStats.MaxMagazineAmmo)
             {
-                Inventory.Ammo[(int)GunStats.BulletType] -= GunStats.MaxMagazineAmmo - GunStats.MagazineAmmo;
+                BulletInventory.Ammo[(int)GunStats.BulletType] -= GunStats.MaxMagazineAmmo - GunStats.MagazineAmmo;
 
                 GunStats.MagazineAmmo = GunStats.MaxMagazineAmmo;
             }
             else
             {
-                GunStats.MagazineAmmo = Inventory.Ammo[(int)GunStats.BulletType];
+                GunStats.MagazineAmmo = BulletInventory.Ammo[(int)GunStats.BulletType];
 
-                Inventory.Ammo[(int)GunStats.BulletType] = 0;
+                BulletInventory.Ammo[(int)GunStats.BulletType] = 0;
             }
 
             ChangeAmmoUI?.Invoke(GunStats.MagazineAmmo, GunStats.BulletType);
@@ -190,11 +232,23 @@ public abstract class Weapon : MonoBehaviour
 
     private void Aim()
     {
-        Player.Aiming = !Player.Aiming;
+        if (GunStats.Reloading == false && GunStats.CanReload && GunStats.CanAim)
+        {
+            _animator.ResetTrigger("Disable Aim");
 
-        ChangeAim?.Invoke(Player.Aiming);
+            Player.Aiming = !Player.Aiming;
 
-        _animator.SetBool("Aim", Player.Aiming);
+            ChangeAim?.Invoke(Player.Aiming);
+
+            if (Player.Aiming == true)
+            {
+                _animator.SetTrigger("Enable Aim");
+            }
+            else
+            {
+                _animator.SetTrigger("Disable Aim");
+            }
+        }
     }
 
     private void DisableAim()
@@ -203,7 +257,7 @@ public abstract class Weapon : MonoBehaviour
 
         ChangeAim?.Invoke(Player.Aiming);
 
-        _animator.SetBool("Aim", false);
+        _animator.SetTrigger("Disable Aim");
     }
 
     virtual protected void AudioShoot()
@@ -218,18 +272,14 @@ public abstract class Weapon : MonoBehaviour
 
     virtual protected void OnDestroy()
     {
-        GunControler.Reload -= Reload;
-        GunControler.Fire -= Fire;
-        GunControler.Aiming -= Aim;
+        Player.ChangeAim -= DisableAim;
     }
 
     virtual protected void OnDisable()
     {
         GunStats.Reloading = false;
 
-        GunControler.Reload -= Reload;
-        GunControler.Fire -= Fire;
-        GunControler.Aiming -= Aim;
+        GunStats.GunAwake = false;
 
         Player.ChangeAim -= DisableAim;
 
@@ -240,13 +290,11 @@ public abstract class Weapon : MonoBehaviour
     {
         _animator.SetTrigger("Switch Gun");
 
+        GunStats.GunAwake = true;
+
         StartCoroutine(AwakeGun());
 
         ChangeAmmoUI?.Invoke(GunStats.MagazineAmmo, GunStats.BulletType);
-
-        GunControler.Reload += Reload;
-        GunControler.Fire += Fire;
-        GunControler.Aiming += Aim;
 
         Player.Aiming = false;
 

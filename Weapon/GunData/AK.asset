@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abb1d5bbd5694934ebf26715b931ae3d, type: 3}
   m_Name: AK
   m_EditorClassIdentifier: 
-  MaxAmmo: 120
   MaxMagazineAmmo: 30
-  MagazineAmmo: 27
-  Ammo: 0
+  MagazineAmmo: 22
   Damage: 35
   Accuracy: 0
   ShootRate: 0.1
@@ -24,7 +22,9 @@ MonoBehaviour:
   ReloadTime: 3.6666667
   CanReload: 1
   Reloading: 0
-  CanShoot: 1
+  CanShoot: 0
   AwakeTime: 1
+  GunAwake: 0
+  CanAim: 1
   GunType: 1
   BulletType: 0

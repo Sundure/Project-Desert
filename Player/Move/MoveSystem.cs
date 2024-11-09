@@ -6,10 +6,11 @@ public class MoveSystem : MonoBehaviour
 
     [SerializeField] private Player _player;
 
-    [SerializeField] private Vector3 _height;
-
     [SerializeField] private Transform _footTrasform;
-    [SerializeField] private LayerMask _ground;
+
+    [SerializeField] private LayerMask _groundLayer;
+
+    private Vector3 _height;
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class MoveSystem : MonoBehaviour
             float x = Input.GetAxis("Horizontal");
             float y = Input.GetAxis("Vertical");
 
-            _player.Grounded = Physics.CheckSphere(_footTrasform.position, _player.GravityCheckDistance, _ground);
+            _player.Grounded = Physics.CheckSphere(_footTrasform.position, _player.GravityCheckDistance, _groundLayer);
 
 
             Vector3 vector3 = transform.right * x + transform.forward * y;

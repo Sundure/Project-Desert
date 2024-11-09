@@ -32,6 +32,10 @@ public class GunStats : ScriptableObject
     public bool CanShoot = true;
     public float AwakeTime;
 
+    public bool GunAwake;
+
+    public bool CanAim;
+
     public GunType GunType;
     public BulletType BulletType;
 }

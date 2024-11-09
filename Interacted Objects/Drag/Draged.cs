@@ -61,7 +61,7 @@ public class Draged : MonoBehaviour, IDraged
         enabled = false;
     }
 
-    public void Throw(Vector3 vector3)
+    public void Throw(Vector3 vector3, float power)
     {
         transform.parent = null;
 
@@ -71,6 +71,6 @@ public class Draged : MonoBehaviour, IDraged
 
         enabled = false;
 
-        _rb.AddExplosionForce(300, vector3, 1, 0, ForceMode.Force);
+        _rb.AddExplosionForce(power, vector3, 1, 0, ForceMode.Force);
     }
 }

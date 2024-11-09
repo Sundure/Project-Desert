@@ -12,7 +12,7 @@ public class AmmoBox : MonoBehaviour, IPickuble
 
     public void Pickup()
     {
-        Inventory.Ammo[(int)_bulletType] += _bulletCount;
+        BulletInventory.Ammo[(int)_bulletType] += _bulletCount;
 
         AmmoPickup?.Invoke(_bulletType);
 
