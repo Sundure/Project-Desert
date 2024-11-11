@@ -21,6 +21,8 @@ public class Inventory : MonoBehaviour
     private void Start()
     {
         _inventoryUI.SetActive(false);
+
+        InventorySlot.OnItemSlotDestroy += OnItemSlotDestroy;
     }
 
     private void Update()
@@ -39,15 +41,11 @@ public class Inventory : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            Pause.PauseGame();
         }
         else
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-
-            Pause.UnpauseGame();
         }
 
         _inventoryUI.SetActive(Player.UseInventory);
@@ -65,12 +63,12 @@ public class Inventory : MonoBehaviour
         {
             InventorySlot findedItem = _itemList[i];
 
-            if (findedItem.ItemType == item.ItemType && findedItem.Stacked == true)
+            if (findedItem.ItemIndeficator == item.ItemInfo.ItemIndeficator && findedItem.Stacked == true)
             {
                 findedItem.ItemCount += item.ItemCount;
-                findedItem.Weight += item.Weight;
+                findedItem.Weight += item.ItemInfo.Weight;
 
-                findedItem.UpdateItemCount();
+                findedItem.UpdateUIItemCount();
 
                 return;
             }
@@ -80,19 +78,36 @@ public class Inventory : MonoBehaviour
 
         InventorySlot itemSlot = newSlot.GetComponent<InventorySlot>();
 
-        itemSlot.Rarity = item.Rarity;
-        itemSlot.ItemType = item.ItemType;
-        itemSlot.Resource = item.Resource;
-        itemSlot.Ammo = item.Ammo;
-        itemSlot.Weapon = item.Weapon;
-        itemSlot.Stacked = item.Stacked;
-        itemSlot.PickupClip = item.PickupClip;
-        itemSlot.ItemIcon = item.ItemIcon;
-        itemSlot.HandItem = item.HandItem;
-        itemSlot.GroundItem = item.GroundItem;
+        itemSlot.Rarity = item.ItemInfo.Rarity;
+        itemSlot.ItemIndeficator = item.ItemInfo.ItemIndeficator;
+        itemSlot.ItemType = item.ItemInfo.ItemType;
+        itemSlot.Stacked = item.ItemInfo.Stacked;
+        itemSlot.PickupClip = item.ItemInfo.PickupClip;
+        itemSlot.Item = item.ItemInfo.Item;
         itemSlot.SlotNumber = count;
         itemSlot.ItemCount = item.ItemCount;
         itemSlot.Inventory = this;
+        itemSlot.ItemName = item.ItemInfo.ItemName;
+
+        if (item.ItemInfo.ItemIcon != null)
+        {
+            itemSlot.ItemIcon = item.ItemInfo.ItemIcon;
+        }
+
+        if (item.ItemInfo.ItemType == ItemTypes.Ammo)
+        {
+            for (int i = 0; i < Enum.GetValues(typeof(BulletType)).Length; i++)
+            {
+                BulletType findedBulletType = (BulletType)i;
+
+                if (item.ItemInfo.ItemIndeficator.ToString() == findedBulletType.ToString())
+                {
+                    Debug.Log("Bullet Finded");
+
+                    break;
+                }
+            }
+        }
 
         _itemList.Add(itemSlot);
 
@@ -113,7 +128,16 @@ public class Inventory : MonoBehaviour
 
         if (_chousedItem != null)
         {
-            _chousedItem.SetActive(false);
+            _chousedItem.GetComponent<InventorySlot>().SelectionFrame.SetActive(false);
+
+            _chousedItem = item;
+
+            inventorySlot.SelectionFrame.SetActive(true);
+
+            ChouseItem?.Invoke(inventorySlot);
+
+            return;
+
         }
 
         _chousedItem = item;
@@ -122,5 +146,10 @@ public class Inventory : MonoBehaviour
 
         ChouseItem?.Invoke(inventorySlot);
 
+    }
+
+    private void OnItemSlotDestroy(InventorySlot slot)
+    {
+        _itemList.Remove(slot);
     }
 }

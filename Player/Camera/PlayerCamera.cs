@@ -23,29 +23,33 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        float mouseX = Input.GetAxis("Mouse X") * _cameraSettings.MouseSens * _cameraSettings.SensMultiplier * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * _cameraSettings.MouseSens * _cameraSettings.SensMultiplier * Time.deltaTime;
-
-        _xRotation -= mouseY;
-
-        if (Player.Drived == false)
+        if (Player.UseInventory == false)
         {
-            _xRotation = Mathf.Clamp(_xRotation, -_cameraSettings.MaxUpRotation, _cameraSettings.MaxDownRotation);
+            float mouseX = Input.GetAxis("Mouse X") * _cameraSettings.MouseSens * _cameraSettings.SensMultiplier * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * _cameraSettings.MouseSens * _cameraSettings.SensMultiplier * Time.deltaTime;
 
-            transform.localRotation = Quaternion.Euler(_xRotation, 0, 0);
+            _xRotation -= mouseY;
 
-            _playerTransform.transform.Rotate(Vector3.up * mouseX);
+            if (Player.Drived == false)
+            {
+                _xRotation = Mathf.Clamp(_xRotation, -_cameraSettings.MaxUpRotation, _cameraSettings.MaxDownRotation);
 
-            XRotation = transform.localEulerAngles.x;
+                transform.localRotation = Quaternion.Euler(_xRotation, 0, 0);
+
+                _playerTransform.transform.Rotate(Vector3.up * mouseX);
+
+                XRotation = transform.localEulerAngles.x;
+            }
+            else
+            {
+                _yRotation += mouseX;
+
+                _xRotation = Mathf.Clamp(_xRotation, -30, 30);
+
+                transform.localRotation = Quaternion.Euler(_xRotation, _yRotation, 0);
+            }
         }
-        else
-        {
-            _yRotation += mouseX;
 
-            _xRotation = Mathf.Clamp(_xRotation, -30, 30);
-
-            transform.localRotation = Quaternion.Euler(_xRotation, _yRotation, 0);
-        }
     }
 
     private void ChangeZeroCameraPos()

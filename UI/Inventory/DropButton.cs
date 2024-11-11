@@ -8,8 +8,10 @@ public class DropButton : MonoBehaviour
     {
         Inventory.ChouseItem += GetItem;
         Inventory.UnchouseItem += DisableButton;
+        InventorySlot.OnItemSlotDestroy += OnItemSlotDestroy;
 
         gameObject.SetActive(false);
+
     }
 
     private void GetItem(InventorySlot item)
@@ -22,6 +24,9 @@ public class DropButton : MonoBehaviour
     public void Drop()
     {
         Debug.Log(_item.ItemType);
+
+        _item.Drop();
+
     }
 
     private void DisableButton()
@@ -29,5 +34,20 @@ public class DropButton : MonoBehaviour
         _item = null;
 
         gameObject.SetActive(false);
+    }
+
+    private void OnItemSlotDestroy(InventorySlot slot)
+    {
+        if (slot == _item)
+        {
+            DisableButton();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        Inventory.ChouseItem -= GetItem;
+        Inventory.UnchouseItem -= DisableButton;
+        InventorySlot.OnItemSlotDestroy -= OnItemSlotDestroy;
     }
 }

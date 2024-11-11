@@ -10,15 +10,19 @@ public class Sway : MonoBehaviour
 
     private void Update()
     {
-        float x = Input.GetAxis("Mouse Y");
-        float y = Input.GetAxis("Mouse X");
+        if (Player.UseInventory == false)
+        {
+            float x = Input.GetAxis("Mouse Y");
+            float y = Input.GetAxis("Mouse X");
 
-        _position += new Vector3(x, -y, 0) * _speed;
+            _position += new Vector3(x, -y, 0) * _speed;
 
-        _targetPosition = Vector3.Lerp(_targetPosition, Vector3.zero, Time.deltaTime);
+            _targetPosition = Vector3.Lerp(_targetPosition, Vector3.zero, Time.deltaTime);
 
-        _position = Vector3.Slerp (_position, _targetPosition, _returnSpeed * Time.deltaTime);
+        }
 
-        transform.localRotation = Quaternion.Euler(_position);
+            _position = Vector3.Slerp(_position, _targetPosition, _returnSpeed * Time.deltaTime);
+
+            transform.localRotation = Quaternion.Euler(_position);
     }
 }

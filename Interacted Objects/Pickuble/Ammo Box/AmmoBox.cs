@@ -20,6 +20,6 @@ public class AmmoBox : MonoBehaviour, IPickuble
 
         PickubleAudioSource.AudioSource.PlayOneShot(_pickupClip[random]);
 
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AK
   m_EditorClassIdentifier: 
   MaxMagazineAmmo: 30
-  MagazineAmmo: 22
+  MagazineAmmo: 33250
   Damage: 35
   Accuracy: 0
   ShootRate: 0.1
@@ -22,7 +22,7 @@ MonoBehaviour:
   ReloadTime: 3.6666667
   CanReload: 1
   Reloading: 0
-  CanShoot: 0
+  CanShoot: 1
   AwakeTime: 1
   GunAwake: 0
   CanAim: 1

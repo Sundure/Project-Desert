@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class AmmoIndicator : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _ammo;
     [SerializeField] private TextMeshProUGUI _magazineAmmo;
+    [SerializeField] private TextMeshProUGUI _inventoryAmmo;
 
     private int _lastValue;
     private BulletType _lastAmmo;
@@ -20,21 +20,35 @@ public class AmmoIndicator : MonoBehaviour
 
     private void ChangeValue(int ammo, BulletType ammoIndex)
     {
-        _ammo.text = $"{ammo}";
+        _magazineAmmo.text = $"{ammo}";
 
-        if (BulletInventory.Ammo[(int)ammoIndex] > 999)
-        {
-            _magazineAmmo.fontSize = 30;
-        }
-        else
-        {
-            _magazineAmmo.fontSize = 40;
-        }
+        ScaleTextSize((int)ammoIndex, ammo);
 
-        _magazineAmmo.text = $"{BulletInventory.Ammo[(int)ammoIndex]}";
+        _inventoryAmmo.text = $"{BulletInventory.Ammo[(int)ammoIndex]}";
 
         _lastValue = ammo;
         _lastAmmo = ammoIndex;
+    }
+
+    private void ScaleTextSize(int ammoIndex ,int ammo)
+    {
+        if (BulletInventory.Ammo[ammoIndex] > 999)
+        {
+            _inventoryAmmo.fontSize = 30;
+        }
+        else
+        {
+            _inventoryAmmo.fontSize = 40;
+        }
+
+        if (ammo > 999)
+        {
+            _magazineAmmo.fontSize = 40;
+        }
+        else
+        {
+            _magazineAmmo.fontSize = 50;
+        }
     }
 
     private void SwitchUI(bool enable)

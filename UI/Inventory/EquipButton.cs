@@ -8,8 +8,10 @@ public class EquipButton : MonoBehaviour
     {
         Inventory.ChouseItem += GetItem;
         Inventory.UnchouseItem += DisableButton;
+        InventorySlot.OnItemSlotDestroy += OnItemSlotDestroy;
 
         gameObject.SetActive(false);
+
     }
 
     private void GetItem(InventorySlot item)
@@ -29,5 +31,20 @@ public class EquipButton : MonoBehaviour
         _item = null;
 
         gameObject.SetActive(false);
+    }
+
+    private void OnItemSlotDestroy(InventorySlot slot)
+    {
+        if (slot == _item)
+        {
+            DisableButton();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        Inventory.ChouseItem -= GetItem;
+        Inventory.UnchouseItem -= DisableButton;
+        InventorySlot.OnItemSlotDestroy -= OnItemSlotDestroy;
     }
 }

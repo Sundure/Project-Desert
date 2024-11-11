@@ -13,11 +13,9 @@ public class InventorySlot : MonoBehaviour
 
     [Header("Type")]
 
-    public ItemList ItemType;
+    public ItemList ItemIndeficator;
 
-    public bool Resource;
-    public bool Ammo;
-    public bool Weapon;
+    public ItemTypes ItemType;
 
     [Header("Parametrs")]
 
@@ -29,15 +27,15 @@ public class InventorySlot : MonoBehaviour
 
     [Header("Item")]
 
-    public GameObject HandItem;
+    public string ItemName;
 
-    public GameObject GroundItem;
+    public GameObject Item;
 
     public int SlotNumber;
 
     [Header("UI")]
 
-    public Image ItemIcon;
+    public Texture ItemIcon;
 
     public GameObject SelectionFrame;
 
@@ -49,25 +47,21 @@ public class InventorySlot : MonoBehaviour
 
     public Inventory Inventory;
 
+    public static event System.Action<InventorySlot> OnItemSlotDestroy;
+
     private void Start()
     {
-        if (gameObject.TryGetComponent(out InventorySlotUI slotUI))
-        {
-            _inventorySlotUI = slotUI;
+        _inventorySlotUI.ItemName.text = ItemName;
 
-            _inventorySlotUI.ItemName.text = ItemType.ToString();
+        UpdateUIItemCount();
 
-            UpdateItemCount();
-        }
+        GetComponent<RawImage>().material.mainTexture = ItemIcon;
+
     }
 
-    public void UpdateItemCount()
+    public void UpdateUIItemCount()
     {
-        if (ItemCount <= 1)
-        {
-            return;
-        }
-        else
+        if (Stacked)
         {
             _inventorySlotUI.ItemCount.text = ItemCount.ToString();
         }
@@ -80,16 +74,39 @@ public class InventorySlot : MonoBehaviour
 
     public void Drop()
     {
-        Instantiate(GroundItem);
+        GameObject item = Instantiate(Item, DropPoint.ItemDropPosition.position, Quaternion.identity);
 
-        if (ItemCount <= 0)
-        {
-            Destroy(gameObject);
-        }
+        Item itemComponent = item.GetComponent<Item>();
+
+        itemComponent.ItemCount = 1;
+
+        ChangeItemCount(1);
     }
 
     public void OnItemClick()
     {
-        Inventory.ChoseItem(gameObject,this);
+        if (PickupClip.Length > 0)
+        {
+            int random = Random.Range(0, PickupClip.Length);
+
+            PickubleAudioSource.AudioSource.PlayOneShot(PickupClip[random]);
+        }
+
+        Inventory.ChoseItem(gameObject, this);
+    }
+
+    public void ChangeItemCount(int count)
+    {
+        ItemCount -= count;
+
+
+        if (ItemCount <= 0)
+        {
+            OnItemSlotDestroy?.Invoke(this);
+
+            Destroy(gameObject);
+        }
+
+        UpdateUIItemCount();
     }
 }
