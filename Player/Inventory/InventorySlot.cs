@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,7 +22,7 @@ public class InventorySlot : MonoBehaviour
 
     public bool Stacked;
 
-    public int ItemCount;
+    public int ItemCount { get; private set; }
 
     public AudioClip[] PickupClip;
 
@@ -47,7 +48,8 @@ public class InventorySlot : MonoBehaviour
 
     public Inventory Inventory;
 
-    public static event System.Action<InventorySlot> OnItemSlotDestroy;
+    public static event Action<InventorySlot> OnItemSlotDestroy;
+    public static event Action<BulletType> OnDropAmmoCountsChange;
 
     private void Start()
     {
@@ -80,14 +82,14 @@ public class InventorySlot : MonoBehaviour
 
         itemComponent.ItemCount = 1;
 
-        ChangeItemCount(1);
+        ChangeItemCount(-1);
     }
 
     public void OnItemClick()
     {
         if (PickupClip.Length > 0)
         {
-            int random = Random.Range(0, PickupClip.Length);
+            int random = UnityEngine.Random.Range(0, PickupClip.Length);
 
             PickubleAudioSource.AudioSource.PlayOneShot(PickupClip[random]);
         }
@@ -97,8 +99,22 @@ public class InventorySlot : MonoBehaviour
 
     public void ChangeItemCount(int count)
     {
-        ItemCount -= count;
+        ItemCount += count;
 
+        if (ItemType == ItemTypes.Ammo)
+        {
+            for (int i = 0; i < Enum.GetValues(typeof(BulletType)).Length; i++)
+            {
+                BulletType bulletType = (BulletType)i;
+
+                if (ItemIndeficator.ToString() == bulletType.ToString())
+                {
+                    OnDropAmmoCountsChange?.Invoke(bulletType);
+
+                    break;
+                }
+            }
+        }
 
         if (ItemCount <= 0)
         {

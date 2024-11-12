@@ -2,17 +2,29 @@ using System;
 using UnityEngine;
 public class BulletInventory : MonoBehaviour
 {
-    public static int[] Ammo = new int[Enum.GetValues(typeof(BulletType)).Length];
+    public static InventorySlot[] InventoryAmmoSlot = new InventorySlot[Enum.GetValues(typeof(BulletType)).Length];
 
-    public static string[] AmmoName = new string[Enum.GetValues(typeof(BulletType)).Length];
-
-    private void Start()
+    public static int TakeAmmo(int ammoIndex, int requestAmmo)
     {
-        for (int i = 0; i < AmmoName.Length; i++)
-        {
-            BulletType bulletType = (BulletType)i;
+        InventorySlot ammoSlot = InventoryAmmoSlot[ammoIndex];
 
-            AmmoName[i] = bulletType.ToString();
+        int ammo;
+
+        if (requestAmmo > ammoSlot.ItemCount)
+        {
+            ammo = ammoSlot.ItemCount;
+
+            ammoSlot.ChangeItemCount(-ammoSlot.ItemCount);
         }
+        else
+        {
+            ammo = requestAmmo;
+
+            ammoSlot.ChangeItemCount(-requestAmmo);
+        }
+
+        ammoSlot.UpdateUIItemCount();
+
+        return ammo;
     }
 }

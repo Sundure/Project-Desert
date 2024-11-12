@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Revolver
   m_EditorClassIdentifier: 
   MaxMagazineAmmo: 6
-  MagazineAmmo: 2
+  MagazineAmmo: 6
   Damage: 50
   Accuracy: 0
   ShootRate: 0.3
@@ -27,4 +27,4 @@ MonoBehaviour:
   GunAwake: 0
   CanAim: 1
   GunType: 0
-  BulletType: 1
+  BulletType: 2

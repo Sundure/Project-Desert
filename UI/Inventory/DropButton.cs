@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class DropButton : MonoBehaviour
@@ -26,7 +27,6 @@ public class DropButton : MonoBehaviour
         Debug.Log(_item.ItemType);
 
         _item.Drop();
-
     }
 
     private void DisableButton()

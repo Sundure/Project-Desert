@@ -6,9 +6,8 @@ public abstract class Weapon : MonoBehaviour
 {
     public static event Action<float> OnRecoilFire;
     public static event Action OnFire;
-    public static event Action<Transform, float> SpawnBullet;
+    public static event Action<Transform, Vector3> SpawnBullet;
     public static event Action<bool> ChangeAim;
-    public static event Action<Vector3> OnHit;
 
     public static event Action<int, BulletType> ChangeAmmoUI;
 
@@ -38,8 +37,6 @@ public abstract class Weapon : MonoBehaviour
         GunStats.GunAwake = false;
         GunStats.Reloading = false;
         GunStats.CanShoot = true;
-
-        BulletInventory.Ammo[(int)GunStats.BulletType] = BulletInventory.Ammo[(int)GunStats.BulletType];
 
         GunStats.ReloadTime = _reloadAnimClip.length;
 
@@ -115,21 +112,18 @@ public abstract class Weapon : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
             {
+                SpawnBullet?.Invoke(_bulletSpawnPoint, hit.point);
+
+                if (hit.collider.gameObject.TryGetComponent(out IFoced iForce))  // IForced Always Must Be First
+                {
+                    iForce.TakeForce(hit.point, GunStats.Damage);
+                }
+
                 if (hit.collider.gameObject.TryGetComponent(out IHitable iHit))
                 {
-                    if (hit.collider.gameObject.TryGetComponent(out IFoced iForce))
-                    {
-                        iForce.TakeForce(hit.point, GunStats.Damage);
-                    }
-
                     iHit.TakeDamage(GunStats.Damage);
                 }
-                else
-                {
-                    SpawnBullet?.Invoke(_bulletSpawnPoint, GunStats.Damage);
 
-                    OnHit?.Invoke(hit.point);
-                }
 
                 Debug.DrawRay(ray.origin, ray.direction, Color.green, 10f);
 
@@ -138,7 +132,7 @@ public abstract class Weapon : MonoBehaviour
             }
             else
             {
-                SpawnBullet?.Invoke(_bulletSpawnPoint, GunStats.Damage);
+                SpawnBullet?.Invoke(_bulletSpawnPoint, ray.GetPoint(50));
 
                 Debug.DrawRay(ray.origin, ray.direction, Color.red, 10f);
             }
@@ -157,7 +151,12 @@ public abstract class Weapon : MonoBehaviour
 
     virtual protected void Reload()
     {
-        if (GunStats.MagazineAmmo < GunStats.MaxMagazineAmmo && BulletInventory.Ammo[(int)GunStats.BulletType] > 0 && GunStats.Reloading == false && GunStats.GunAwake == false)
+        if (BulletInventory.InventoryAmmoSlot[(int)GunStats.BulletType] == null)
+        {
+            return;
+        }
+
+        if (GunStats.MagazineAmmo < GunStats.MaxMagazineAmmo && BulletInventory.InventoryAmmoSlot[(int)GunStats.BulletType].ItemCount > 0 && GunStats.Reloading == false && GunStats.GunAwake == false)
         {
             if (Player.Aiming)
             {
@@ -208,18 +207,7 @@ public abstract class Weapon : MonoBehaviour
             GunStats.Reloading = false;
             GunStats.CanReload = true;
 
-            if (BulletInventory.Ammo[(int)GunStats.BulletType] >= GunStats.MaxMagazineAmmo)
-            {
-                BulletInventory.Ammo[(int)GunStats.BulletType] -= GunStats.MaxMagazineAmmo - GunStats.MagazineAmmo;
-
-                GunStats.MagazineAmmo = GunStats.MaxMagazineAmmo;
-            }
-            else
-            {
-                GunStats.MagazineAmmo = BulletInventory.Ammo[(int)GunStats.BulletType];
-
-                BulletInventory.Ammo[(int)GunStats.BulletType] = 0;
-            }
+            GunStats.MagazineAmmo += BulletInventory.TakeAmmo((int)GunStats.BulletType, GunStats.MaxMagazineAmmo - GunStats.MagazineAmmo);
 
             ChangeAmmoUI?.Invoke(GunStats.MagazineAmmo, GunStats.BulletType);
         }

@@ -13,7 +13,8 @@ public class AmmoIndicator : MonoBehaviour
     {
         GunSwitch.SwitchGun += SwitchUI;
         Weapon.ChangeAmmoUI += ChangeValue;
-        AmmoBox.AmmoPickup += ValueCheck;
+        Inventory.OnAmmoPickup += ValueCheck;
+        InventorySlot.OnDropAmmoCountsChange += ValueCheck;
 
         gameObject.SetActive(false);
     }
@@ -24,22 +25,37 @@ public class AmmoIndicator : MonoBehaviour
 
         ScaleTextSize((int)ammoIndex, ammo);
 
-        _inventoryAmmo.text = $"{BulletInventory.Ammo[(int)ammoIndex]}";
+        if (BulletInventory.InventoryAmmoSlot[(int)ammoIndex] != null)
+        {
+            _inventoryAmmo.text = $"{BulletInventory.InventoryAmmoSlot[(int)ammoIndex].ItemCount}";
+        }
+        else
+        {
+            _inventoryAmmo.text = "0";
+        }
 
         _lastValue = ammo;
         _lastAmmo = ammoIndex;
     }
 
-    private void ScaleTextSize(int ammoIndex ,int ammo)
+    private void ScaleTextSize(int ammoIndex, int ammo)
     {
-        if (BulletInventory.Ammo[ammoIndex] > 999)
+        if (BulletInventory.InventoryAmmoSlot[ammoIndex] != null)
         {
-            _inventoryAmmo.fontSize = 30;
+            if (BulletInventory.InventoryAmmoSlot[ammoIndex].ItemCount > 999)
+            {
+                _inventoryAmmo.fontSize = 30;
+            }
+            else
+            {
+                _inventoryAmmo.fontSize = 40;
+            }
         }
         else
         {
             _inventoryAmmo.fontSize = 40;
         }
+
 
         if (ammo > 999)
         {
@@ -49,6 +65,7 @@ public class AmmoIndicator : MonoBehaviour
         {
             _magazineAmmo.fontSize = 50;
         }
+
     }
 
     private void SwitchUI(bool enable)
@@ -68,6 +85,7 @@ public class AmmoIndicator : MonoBehaviour
     {
         GunSwitch.SwitchGun -= SwitchUI;
         Weapon.ChangeAmmoUI -= ChangeValue;
-        AmmoBox.AmmoPickup -= ValueCheck;
+        Inventory.OnAmmoPickup -= ValueCheck;
+        InventorySlot.OnDropAmmoCountsChange -= ValueCheck;
     }
 }

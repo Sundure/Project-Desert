@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public static LayerMask PlayerLayer {  get; private set; }
+
     [Header("Controler")]
     public static CharacterController Controller;
 
@@ -45,6 +47,11 @@ public class Player : MonoBehaviour
 
 
     public static event Action ChangeAim;
+
+    private void Start()
+    {
+        PlayerLayer = gameObject.layer;
+    }
 
     public static void ChangeGunEmbark(bool booled)
     {
