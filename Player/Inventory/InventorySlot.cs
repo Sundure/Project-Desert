@@ -9,36 +9,36 @@ public class InventorySlot : MonoBehaviour
     public float Weight;
 
     [Header("Rarity")]
-
-    public ItemRarity Rarity;
+    public ItemRarity Rarity { get; private set; }
 
     [Header("Type")]
 
-    public ItemList ItemIndeficator;
+    public ItemList ItemIndeficator { get; private set; }
 
-    public ItemTypes ItemType;
+    public ItemTypes ItemType { get; private set; }
 
     [Header("Parametrs")]
 
-    public bool Stacked;
+    public bool Stacked { get; private set; }
 
     public int ItemCount { get; private set; }
 
-    public AudioClip[] PickupClip;
+    public AudioClip[] PickupClip { get; private set; }
 
     [Header("Item")]
 
-    public string ItemName;
+    public string ItemName { get; private set; }
 
-    public GameObject Item;
-
-    public int SlotNumber;
+    public GameObject Item { get; private set; }
 
     [Header("UI")]
 
-    public Texture ItemIcon;
+    [SerializeField] private Texture _standartItemIcon;
+    public Texture ItemIcon { get; private set; }
 
-    public GameObject SelectionFrame;
+    [SerializeField] private GameObject _selectionFrame;
+    public GameObject SelectionFrame { get { return _selectionFrame; } }
+
 
     [Header("Other")]
 
@@ -124,5 +124,24 @@ public class InventorySlot : MonoBehaviour
         }
 
         UpdateUIItemCount();
+    }
+
+    public void SetProperties(ItemSlotProperties properties)
+    {
+        Rarity = properties.Rarity;
+        ItemIndeficator = properties.ItemIndeficator;
+        ItemType = properties.ItemType;
+        Stacked = properties.Stacked;
+        PickupClip = properties.PickupClip;
+        Item = properties.Item;
+        ItemName = properties.ItemName;
+
+        if (properties.ItemIcon != null)
+        {
+            ItemIcon = properties.ItemIcon;
+        }
+        else
+            ItemIcon = _standartItemIcon;
+
     }
 }

@@ -58,8 +58,6 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(Item item)
     {
-        int count = 0;
-
         for (int i = 0; i < _itemList.Count; i++)
         {
             InventorySlot findedItem = _itemList[i];
@@ -91,23 +89,21 @@ public class Inventory : MonoBehaviour
 
         GameObject newSlot = Instantiate(_inventorySlotPrefab, Vector3.zero, Quaternion.identity, _itemSlot.transform);
 
+
+        ItemSlotProperties properties = ScriptableObject.CreateInstance<ItemSlotProperties>();
+
+        properties = SetProperties(properties, item);
+
+
         InventorySlot inventorySlot = newSlot.GetComponent<InventorySlot>();
 
-        inventorySlot.Rarity = item.ItemInfo.Rarity;
-        inventorySlot.ItemIndeficator = item.ItemInfo.ItemIndeficator;
-        inventorySlot.ItemType = item.ItemInfo.ItemType;
-        inventorySlot.Stacked = item.ItemInfo.Stacked;
-        inventorySlot.PickupClip = item.ItemInfo.PickupClip;
-        inventorySlot.Item = item.ItemInfo.Item;
-        inventorySlot.SlotNumber = count;
         inventorySlot.ChangeItemCount(item.ItemCount);
         inventorySlot.Inventory = this;
-        inventorySlot.ItemName = item.ItemInfo.ItemName;
 
-        if (item.ItemInfo.ItemIcon != null)
-        {
-            inventorySlot.ItemIcon = item.ItemInfo.ItemIcon;
-        }
+        inventorySlot.SetProperties(properties);
+
+        Destroy(properties);
+
 
         if (item.ItemInfo.ItemType == ItemTypes.Ammo)
         {
@@ -127,6 +123,20 @@ public class Inventory : MonoBehaviour
 
         _itemList.Add(inventorySlot);
 
+    }
+
+    private ItemSlotProperties SetProperties(ItemSlotProperties properties, Item item)
+    {
+        properties.Rarity = item.ItemInfo.Rarity;
+        properties.ItemIndeficator = item.ItemInfo.ItemIndeficator;
+        properties.ItemType = item.ItemInfo.ItemType;
+        properties.Stacked = item.ItemInfo.Stacked;
+        properties.PickupClip = item.ItemInfo.PickupClip;
+        properties.Item = item.ItemInfo.Item;
+        properties.ItemName = item.ItemInfo.ItemName;
+        properties.ItemIcon = item.ItemInfo.ItemIcon;
+
+        return properties;
     }
 
     public void ChoseItem(GameObject item, InventorySlot inventorySlot)
