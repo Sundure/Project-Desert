@@ -7,9 +7,11 @@ public class Interact : MonoBehaviour
 
     private int _layerMask;
 
-    [SerializeField] private Inventory _inventory;
+    private Inventory _inventory;
     private void Start()
     {
+        _inventory = Inventory.Instance;
+
         _layerMask = ~LayerMask.GetMask("Car", "Player");
     }
     private void Update()

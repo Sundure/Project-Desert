@@ -3,14 +3,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Scripts/Weapon/GunData")]
 public class GunStats : ScriptableObject
 {
-    private void Awake()
-    {
-        MagazineAmmo = MaxMagazineAmmo;
-    }
 
     [Header("Stats")]
     public int MaxMagazineAmmo;
-    public int MagazineAmmo;
 
     public float Damage;
 
@@ -25,16 +20,8 @@ public class GunStats : ScriptableObject
 
     public float ReloadTime;
 
-    public bool CanReload;
-    public bool Reloading;
-
     [Header("Gun")]
-    public bool CanShoot = true;
     public float AwakeTime;
-
-    public bool GunAwake;
-
-    public bool CanAim;
 
     public GunType GunType;
     public BulletType BulletType;

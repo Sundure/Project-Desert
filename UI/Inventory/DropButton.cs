@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class DropButton : MonoBehaviour
@@ -7,7 +6,7 @@ public class DropButton : MonoBehaviour
 
     private void Awake()
     {
-        Inventory.ChouseItem += GetItem;
+        Inventory.OnChooseItem += GetItem;
         Inventory.UnchouseItem += DisableButton;
         InventorySlot.OnItemSlotDestroy += OnItemSlotDestroy;
 
@@ -46,7 +45,7 @@ public class DropButton : MonoBehaviour
 
     private void OnDestroy()
     {
-        Inventory.ChouseItem -= GetItem;
+        Inventory.OnChooseItem -= GetItem;
         Inventory.UnchouseItem -= DisableButton;
         InventorySlot.OnItemSlotDestroy -= OnItemSlotDestroy;
     }

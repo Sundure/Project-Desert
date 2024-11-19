@@ -44,8 +44,6 @@ public class InventorySlot : MonoBehaviour
 
     [SerializeField] private InventorySlotUI _inventorySlotUI;
 
-    [SerializeField] private GameObject _panel;
-
     public Inventory Inventory;
 
     public static event Action<InventorySlot> OnItemSlotDestroy;
@@ -69,18 +67,22 @@ public class InventorySlot : MonoBehaviour
         }
     }
 
-    public void SwitchPanel()
-    {
-        _panel.SetActive(!_panel.activeSelf);
-    }
-
     public void Drop()
     {
-        GameObject item = Instantiate(Item, DropPoint.ItemDropPosition.position, Quaternion.identity);
+        GameObject item = Instantiate(Item, DropPoint.ItemDropPosition.position, Item.transform.rotation);
 
         Item itemComponent = item.GetComponent<Item>();
 
         itemComponent.ItemCount = 1;
+
+        if (ItemType == ItemTypes.Weapon)
+        {
+            GunData gunData = GetComponent<GunData>();
+
+            GunData itemGunData = item.AddComponent<GunData>();
+
+            itemGunData.MagazineAmmo = gunData.MagazineAmmo;
+        }
 
         ChangeItemCount(-1);
     }
@@ -94,7 +96,7 @@ public class InventorySlot : MonoBehaviour
             PickubleAudioSource.AudioSource.PlayOneShot(PickupClip[random]);
         }
 
-        Inventory.ChoseItem(gameObject, this);
+        Inventory.ChooseItem(gameObject, this);
     }
 
     public void ChangeItemCount(int count)
@@ -126,6 +128,10 @@ public class InventorySlot : MonoBehaviour
         UpdateUIItemCount();
     }
 
+    /// <summary>
+    /// Set Properties To Current Inventory Slot
+    /// </summary>
+    /// <param name="properties"></param>
     public void SetProperties(ItemSlotProperties properties)
     {
         Rarity = properties.Rarity;

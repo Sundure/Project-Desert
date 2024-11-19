@@ -6,18 +6,31 @@ public class Inventory : MonoBehaviour
 {
     [SerializeField] private GameObject _inventorySlotPrefab;
 
-    [SerializeField] private GameObject _inventoryUI;
-    [SerializeField] private GameObject _itemSlot;
-
-    [SerializeField] private GameObject _itemDirectory;
+    [SerializeField] private GameObject _inventoryUI; // Inventory Root
+    [SerializeField] private GameObject _itemPanelDirectory;
 
     private GameObject _chousedItem;
 
     private readonly List<InventorySlot> _itemList = new();
 
-    public static event Action<InventorySlot> ChouseItem;
+    public static event Action<InventorySlot> OnChooseItem;
     public static event Action UnchouseItem;
     public static event Action<BulletType> OnAmmoPickup;
+
+    public static Inventory Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+
+            return;
+        }
+
+        Destroy(this);
+    }
+
 
     private void Start()
     {
@@ -33,6 +46,7 @@ public class Inventory : MonoBehaviour
             UseInventory();
         }
     }
+
 
     private void UseInventory()
     {
@@ -55,6 +69,12 @@ public class Inventory : MonoBehaviour
 
         Player.CanInteract = !Player.UseInventory;
     }
+
+
+    /// <summary>
+    /// Add Item To List
+    /// </summary>
+    /// <param name="item"></param>
 
     public void AddItem(Item item)
     {
@@ -87,7 +107,7 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        GameObject newSlot = Instantiate(_inventorySlotPrefab, Vector3.zero, Quaternion.identity, _itemSlot.transform);
+        GameObject newSlot = Instantiate(_inventorySlotPrefab, Vector3.zero, Quaternion.identity, _itemPanelDirectory.transform);
 
 
         ItemSlotProperties properties = ScriptableObject.CreateInstance<ItemSlotProperties>();
@@ -104,25 +124,34 @@ public class Inventory : MonoBehaviour
 
         Destroy(properties);
 
-
-        if (item.ItemInfo.ItemType == ItemTypes.Ammo)
+        switch (item.ItemInfo.ItemType)
         {
-            for (int i = 0; i < Enum.GetValues(typeof(BulletType)).Length; i++)
-            {
-                BulletType findedBulletType = (BulletType)i;
-
-                if (item.ItemInfo.ItemIndeficator.ToString() == findedBulletType.ToString())
+            case ItemTypes.Ammo:
+                for (int i = 0; i < Enum.GetValues(typeof(BulletType)).Length; i++)
                 {
-                    BulletInventory.InventoryAmmoSlot[i] = inventorySlot;
+                    BulletType findedBulletType = (BulletType)i;
 
-                    OnAmmoPickup?.Invoke(findedBulletType);
-                    break;
+                    if (item.ItemInfo.ItemIndeficator.ToString() == findedBulletType.ToString())
+                    {
+                        BulletInventory.InventoryAmmoSlot[i] = inventorySlot;
+
+                        OnAmmoPickup?.Invoke(findedBulletType);
+                        break;
+                    }
                 }
-            }
+                break;
+
+            case ItemTypes.Weapon:
+                GunData gunData = item.gameObject.GetComponent<GunData>();
+
+                GunData savedGunData = inventorySlot.gameObject.AddComponent<GunData>();
+
+                savedGunData.MagazineAmmo = gunData.MagazineAmmo;
+
+                break;
         }
 
         _itemList.Add(inventorySlot);
-
     }
 
     private ItemSlotProperties SetProperties(ItemSlotProperties properties, Item item)
@@ -139,7 +168,13 @@ public class Inventory : MonoBehaviour
         return properties;
     }
 
-    public void ChoseItem(GameObject item, InventorySlot inventorySlot)
+    /// <summary>
+    /// Select A Specific Item In The Inventory To Interact With Him
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="inventorySlot"></param>
+
+    public void ChooseItem(GameObject item, InventorySlot inventorySlot)
     {
         if (_chousedItem == item)
         {
@@ -160,7 +195,7 @@ public class Inventory : MonoBehaviour
 
             inventorySlot.SelectionFrame.SetActive(true);
 
-            ChouseItem?.Invoke(inventorySlot);
+            OnChooseItem?.Invoke(inventorySlot);
 
             return;
 
@@ -170,7 +205,7 @@ public class Inventory : MonoBehaviour
 
         inventorySlot.SelectionFrame.SetActive(true);
 
-        ChouseItem?.Invoke(inventorySlot);
+        OnChooseItem?.Invoke(inventorySlot);
 
     }
 

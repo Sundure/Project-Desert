@@ -42,4 +42,9 @@ public class ItemInfo : ScriptableObject
 
     [SerializeField] private GameObject _item;
     public GameObject Item { get { return _item; } }
+
+    [Header("Other")]
+
+    [SerializeField] private bool _hasCollisionWithPlayer;
+    public bool HasCollisionWithPlayer { get { return _hasCollisionWithPlayer; } }
 }

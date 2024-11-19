@@ -2,13 +2,20 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
+    [Header("Item Data")]
+
     public ItemInfo ItemInfo;
+
+    [Header("Dinamic Values")]
 
     public int ItemCount = 1;
 
     private void Start()
     {
-        gameObject.layer = LayerMask.NameToLayer("Item");
+        if (ItemInfo.HasCollisionWithPlayer == false)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Ignore Player");
+        }
     }
 
     public void Pickup()
